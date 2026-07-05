@@ -27,7 +27,7 @@ blocks:
             help: Volle Breite, Boxed, Slider
             options:
               full-bg: Hintergrund vollflächig, Inhalt zentriert
-              full-content: Inhalt vollflächig
+              full-width: Inhalt vollflächig
           background:
             label: Hintergrund
             type: select
@@ -50,6 +50,38 @@ blocks:
             options:
               separator-top: Trennlinie oben
               separator-bottom: Trennlinie unten
+      spacing:
+        label: Abstand
+        fields:
+          flow:
+            label: Flow
+            type: select
+            full_width: true
+            help: Abstand zum vorherigen Inhaltselement
+            options:
+              flow-tight: Tight
+              flow-text: Text
+              flow-heading: Überschrift
+              flow-element: Element
+              flow-article: Artikel
+          margin:
+            label: Außen-Abstand
+            type: trbl
+            responsive: true
+            class_patterns:
+              top: "mt-{breakpoint}{value}"
+              right: "mr-{breakpoint}{value}"
+              bottom: "mb-{breakpoint}{value}"
+              left: "ml-{breakpoint}{value}"
+          padding:
+            label: Innen-Abstand
+            type: trbl
+            responsive: true
+            class_patterns:
+              top: "pt-{breakpoint}{value}"
+              right: "pr-{breakpoint}{value}"
+              bottom: "pb-{breakpoint}{value}"
+              left: "pl-{breakpoint}{value}"
 
   content:
     label: Inhalte
