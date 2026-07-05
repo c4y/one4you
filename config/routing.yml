@@ -1,0 +1,3 @@
+one4you_controllers:
+  resource: "@ContaoOne4youBundle/src/Controller/"
+  type: attribute

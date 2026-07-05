@@ -1,0 +1,28 @@
+{% extends "@Contao/frontend_module/_base.html.twig" %}
+
+{% block content %}
+    <form class="one4you-search" action="{{ action }}" method="get" role="search" data-one4you-search>
+        <label class="one4you-search__label" for="{{ input_id }}">{{ label }}</label>
+        <div class="one4you-search__shell">
+            <input
+                class="one4you-search__input"
+                id="{{ input_id }}"
+                type="search"
+                name="keywords"
+                value="{{ keyword }}"
+                placeholder="{{ placeholder }}"
+                autocomplete="off"
+            >
+            <button
+                class="one4you-search__button"
+                type="submit"
+                aria-label="{{ open_label }}"
+                data-one4you-search-button
+                data-open-label="{{ open_label }}"
+                data-submit-label="{{ submit_label }}"
+            >
+                {{ search_icon|raw }}
+            </button>
+        </div>
+    </form>
+{% endblock %}

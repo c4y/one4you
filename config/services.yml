@@ -1,0 +1,18 @@
+parameters:
+    one4you.svg.default_icon_path: 'files/theme/icons'
+    one4you.svg.icon_path: '%env(default:one4you.svg.default_icon_path:ONE4YOU_SVG_ICON_PATH)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    C4Y\One4you\:
+        resource: '../src/*'
+        exclude: '../src/{Entity,Migrations,Tests,Kernel.php,Resources/contao}'
+
+    C4Y\One4you\EventListener\DataContainer\ImageSizeOptionsListener:
+        arguments:
+            - '@security.helper'
+            - '@contao.image.sizes'

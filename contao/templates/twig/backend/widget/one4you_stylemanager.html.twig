@@ -1,0 +1,135 @@
+{% macro field_name(base, block, tab, field) %}
+    {{- base ~ '[' ~ block ~ '][' ~ tab ~ '][' ~ field ~ ']' -}}
+{% endmacro %}
+
+{% macro select_field(baseName, id, field, value) %}
+    <select name="{{ baseName }}" id="{{ id }}" class="tl_select" data-action="focus->contao--scroll-offset#store">
+        <option value="">-</option>
+        {% for option in field.options %}
+            <option value="{{ option.value }}"{{ option.value == value ? ' selected' : '' }}>{{ option.label }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+
+{% macro trbl_field(baseName, id, value) %}
+    {% set sides = {'top': 'Oben', 'right': 'Rechts', 'bottom': 'Unten', 'left': 'Links'} %}
+    <div class="one4you-trbl" role="group" aria-labelledby="{{ id }}_label">
+        {% for side, label in sides %}
+            <label class="one4you-trbl__item">
+                <span>{{ label }}</span>
+                <input type="text" name="{{ baseName }}[{{ side }}]" id="{{ id }}_{{ side }}" class="tl_text_trbl trbl_{{ side }}" value="{{ value[side]|default('') }}" data-action="focus->contao--scroll-offset#store">
+            </label>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% import _self as widget %}
+
+<div class="one4you-stylemanager" data-one4you-stylemanager="{{ id }}">
+    {% for blockAlias, block in blocks %}
+        <section class="one4you-stylemanager__block">
+            <h4 class="one4you-stylemanager__title">{{ block.label }}</h4>
+
+            {% set tabIds = [] %}
+            {% for tabAlias, tab in block.tabs %}
+                {% set tabIds = tabIds|merge([id ~ '_' ~ blockAlias ~ '_' ~ tabAlias]) %}
+            {% endfor %}
+
+            <div class="one4you-stylemanager__tabs" role="tablist">
+                {% for tabAlias, tab in block.tabs %}
+                    {% set tabId = id ~ '_' ~ blockAlias ~ '_' ~ tabAlias %}
+                    <button class="one4you-stylemanager__tab{{ loop.first ? ' is-active' : '' }}" type="button" role="tab" aria-selected="{{ loop.first ? 'true' : 'false' }}" aria-controls="{{ tabId }}" data-one4you-tab="{{ tabId }}">
+                        {{ tab.label }}
+                    </button>
+                {% endfor %}
+            </div>
+
+            {% for tabAlias, tab in block.tabs %}
+                {% set tabId = id ~ '_' ~ blockAlias ~ '_' ~ tabAlias %}
+                <div id="{{ tabId }}" class="one4you-stylemanager__panel{{ loop.first ? ' is-active' : '' }}" role="tabpanel">
+                    {% for fieldAlias, field in tab.fields %}
+                        {% set value = values[blockAlias][tabAlias][fieldAlias]|default(field.type == 'checkbox' ? [] : '') %}
+                        {% set fieldBaseName = name ~ '[' ~ blockAlias ~ '][' ~ tabAlias ~ '][' ~ fieldAlias ~ ']' %}
+                        {% set fieldId = id ~ '_' ~ blockAlias ~ '_' ~ tabAlias ~ '_' ~ fieldAlias %}
+
+                        <div class="one4you-stylemanager__field one4you-stylemanager__field--{{ field.type }} one4you-stylemanager__field--{{ fieldAlias }}{{ field.full_width|default(false) ? ' one4you-stylemanager__field--full' : '' }}">
+                            <h3 id="{{ fieldId }}_label"><label for="{{ fieldId }}">{{ field.label }}</label></h3>
+
+                            {% if field.type == 'checkbox' %}
+                                <div class="one4you-options">
+                                    {% for option in field.options %}
+                                        <label class="one4you-options__item">
+                                            <input type="checkbox" name="{{ fieldBaseName }}[]" value="{{ option.value }}"{{ option.value in value ? ' checked' : '' }} data-action="focus->contao--scroll-offset#store">
+                                            <span>{{ option.label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% elseif field.type == 'radio' %}
+                                <div class="one4you-options">
+                                    {% for option in field.options %}
+                                        <label class="one4you-options__item">
+                                            <input type="radio" name="{{ fieldBaseName }}" value="{{ option.value }}"{{ option.value == value ? ' checked' : '' }} data-action="focus->contao--scroll-offset#store">
+                                            <span>{{ option.label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% elseif field.type == 'trbl' %}
+                                {{ widget.trbl_field(fieldBaseName, fieldId, value) }}
+                            {% else %}
+                                {% if field.responsive|default(false) %}
+                                    {{ widget.select_field(fieldBaseName ~ '[value]', fieldId, field, value.value|default('')) }}
+                                {% else %}
+                                    {{ widget.select_field(fieldBaseName, fieldId, field, value) }}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if field.help|default('') %}
+                                <p class="tl_help tl_tip" title="">{{ field.help }}</p>
+                            {% endif %}
+
+                            {% if field.responsive|default(false) %}
+                                <details class="one4you-stylemanager__expert">
+                                    <summary>Expertenwerte</summary>
+                                    <div class="one4you-stylemanager__responsive">
+                                        {% for breakpoint in field.breakpoints|default([]) %}
+                                            <div class="one4you-stylemanager__breakpoint">
+                                                <strong>{{ breakpoint }}</strong>
+                                                {% if field.type == 'trbl' %}
+                                                    {{ widget.trbl_field(fieldBaseName ~ '[responsive][' ~ breakpoint ~ ']', fieldId ~ '_' ~ breakpoint, value.responsive[breakpoint]|default({})) }}
+                                                {% elseif field.type in ['select', 'radio'] %}
+                                                    {{ widget.select_field(fieldBaseName ~ '[responsive][' ~ breakpoint ~ ']', fieldId ~ '_' ~ breakpoint, field, value.responsive[breakpoint]|default('')) }}
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </details>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </section>
+    {% endfor %}
+</div>
+
+<script>
+(() => {
+  document.querySelectorAll('[data-one4you-stylemanager="{{ id }}"]').forEach(manager => {
+    manager.querySelectorAll('[data-one4you-tab]').forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.one4youTab;
+        const block = button.closest('.one4you-stylemanager__block');
+
+        block.querySelectorAll('.one4you-stylemanager__tab').forEach(tab => {
+          tab.classList.toggle('is-active', tab === button);
+          tab.setAttribute('aria-selected', tab === button ? 'true' : 'false');
+        });
+
+        block.querySelectorAll('.one4you-stylemanager__panel').forEach(panel => {
+          panel.classList.toggle('is-active', panel.id === target);
+        });
+      });
+    });
+  });
+})();
+</script>

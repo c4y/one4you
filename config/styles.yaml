@@ -1,0 +1,260 @@
+breakpoints: [sm, md, lg, xl]
+
+option_sources:
+  backgrounds:
+    bg-1: Primär (dunkelblau)
+    bg-2: Sekundär (blau)
+    bg-3: Akzent (rot)
+    bg-4: Fläche (weiß)
+    bg-5: Fläche abgesetzt (hellgrau)
+    bg-6: Schwarz (schwarz)
+    bg-7: Weiß (weiß)
+    bg-8: Transparent 1 (transparent)
+    bg-9: Transparent 2 (transparent)
+    bg-10: Transparent 3 (transparent)
+
+blocks:
+  article_layout:
+    label: Layout
+    show_in: [articles]
+    tabs:
+      article:
+        label: Artikel
+        fields:
+          width:
+            label: Breite des Artikels
+            type: select
+            help: Volle Breite, Boxed, Slider
+            options:
+              full-bg: Hintergrund vollflächig, Inhalt zentriert
+              full-content: Inhalt vollflächig
+          background:
+            label: Hintergrund
+            type: select
+            options_source: backgrounds
+          modal:
+            label: Modal
+            type: select
+            help: Der Artikel wird zunächst ausgeblendet und in einem Modal geöffnet.
+            options:
+              modal: Als Modal öffnen
+          indent:
+            label: Einrücken
+            type: select
+            options:
+              indent: Links und rechts einrücken
+              indent-left: Links einrücken
+          separator:
+            label: Trennlinie
+            type: select
+            options:
+              separator-top: Trennlinie oben
+              separator-bottom: Trennlinie unten
+
+  content:
+    label: Inhalte
+    show_in: [content_elements]
+    tabs:
+      settings:
+        label: Grundeinstellungen
+        fields:
+          background:
+            label: Hintergrund
+            type: select
+            options_source: backgrounds
+          indent:
+            label: Einrücken
+            type: select
+            options:
+              indent: Links und rechts einrücken
+              indent-left: Links einrücken
+          separator:
+            label: Trennlinie
+            type: select
+            options:
+              separator-top: Trennlinie oben
+              separator-bottom: Trennlinie unten
+      spacing:
+        label: Abstand
+        fields:
+          flow:
+            label: Flow
+            type: select
+            full_width: true
+            help: Abstand zum vorherigen Inhaltselement
+            options:
+              flow-tight: Tight
+              flow-text: Text
+              flow-heading: Überschrift
+              flow-element: Element
+              flow-article: Artikel
+          margin:
+            label: Außen-Abstand
+            type: trbl
+            responsive: true
+            class_patterns:
+              top: "mt-{breakpoint}{value}"
+              right: "mr-{breakpoint}{value}"
+              bottom: "mb-{breakpoint}{value}"
+              left: "ml-{breakpoint}{value}"
+          padding:
+            label: Innen-Abstand
+            type: trbl
+            responsive: true
+            class_patterns:
+              top: "pt-{breakpoint}{value}"
+              right: "pr-{breakpoint}{value}"
+              bottom: "pb-{breakpoint}{value}"
+              left: "pl-{breakpoint}{value}"
+      cols:
+        label: Spaltenbreite
+        fields:
+          columns:
+            label: Spalten
+            type: select
+            responsive: true
+            class_pattern: "col-{value}"
+            responsive_class_pattern: "col-{breakpoint}-{value}"
+            options:
+              "1": 1 / 12
+              "2": 2 / 12
+              "3": 3 / 12
+              "4": 4 / 12
+              "5": 5 / 12
+              "6": 6 / 12
+              "7": 7 / 12
+              "8": 8 / 12
+              "9": 9 / 12
+              "10": 10 / 12
+              "11": 11 / 12
+              "12": 12 / 12
+          text_columns:
+            label: Text-Spalten
+            type: select
+            responsive: true
+            class_pattern: "c-text-{value}"
+            responsive_class_pattern: "c-text-{breakpoint}-{value}"
+            options:
+              "1": 1 Spalte
+              "2": 2 Spalten
+              "3": 3 Spalten
+              "4": 4 Spalten
+              "5": 5 Spalten
+              "6": 6 Spalten
+          offset:
+            label: Offset
+            type: select
+            responsive: true
+            class_pattern: "cols-offset-start-{value}"
+            responsive_class_pattern: "cols-{breakpoint}-offset-start-{value}"
+            options:
+              "1": 1
+              "2": 2
+              "3": 3
+              "4": 4
+      image:
+        label: Bild
+        fields:
+          round:
+            label: Bild als Kreis
+            type: select
+            options:
+              img-round: Bild als Kreis
+
+  wrapper_layout:
+    label: Wrapper
+    show_in: [content_elements]
+    show_for:
+      tl_content:
+        type: [rsce_wrapper_start]
+    tabs:
+      layout:
+        label: Layout
+        fields:
+          grid_type:
+            label: Grid-Typ
+            type: select
+            help: Layout des Umschlags
+            options:
+              auto:
+                label: "Grid automatisch: gleichmäßige Element-Spalten"
+                classes: row
+              manual:
+                label: "Grid manuell: Spaltenbreite an den enthaltenen Elementen"
+                classes: row
+              flex:
+                label: "Flex: flexibler Umbruch"
+                classes: row-flex
+              section-indexed:
+                label: "Kapitelabschnitt: Label links, Inhalt rechts"
+                classes: section-indexed
+          vertical_center:
+            label: Vertikal zentrieren
+            type: select
+            options:
+              align-items-center: Aktivieren
+          sticky:
+            label: Sticky
+            type: select
+            options:
+              sticky: Aktivieren
+          columns:
+            label: Spalten
+            type: select
+            responsive: true
+            class_pattern: "cols-{value}"
+            responsive_class_pattern: "cols-{breakpoint}-{value}"
+            options:
+              "1": 1 / 12
+              "2": 2 / 12
+              "3": 3 / 12
+              "4": 4 / 12
+              "5": 5 / 12
+              "6": 6 / 12
+              "7": 7 / 12
+              "8": 8 / 12
+              "9": 9 / 12
+              "10": 10 / 12
+              "11": 11 / 12
+              "12": 12 / 12
+      gap:
+        label: Gap
+        fields:
+          gap_column:
+            label: Spaltenabstand
+            type: select
+            responsive: true
+            class_pattern: "gap-column-{value}"
+            responsive_class_pattern: "gap-column-{breakpoint}-{value}"
+            options:
+              none: Kein Abstand
+              sm: Klein
+              md: Mittel
+              lg: Groß
+              xl: Sehr groß
+          gap_row:
+            label: Zeilenabstand
+            type: select
+            responsive: true
+            class_pattern: "gap-row-{value}"
+            responsive_class_pattern: "gap-row-{breakpoint}-{value}"
+            options:
+              none: Kein Abstand
+              sm: Klein
+              md: Mittel
+              lg: Groß
+              xl: Sehr groß
+
+  layout_header:
+    label: Layout
+    show_in: [layouts]
+    tabs:
+      header:
+        label: Header
+        fields:
+          header:
+            label: Header
+            type: select
+            options:
+              "header-fixed header-fixed-padding": Der Header ist dauerhaft sichtbar (Inhalte darunter)
+              header-fixed: Der Header ist dauerhaft sichtbar (über den Inhalten)

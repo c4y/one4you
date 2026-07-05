@@ -1,0 +1,14 @@
+<?php
+
+namespace C4Y\One4you\EventListener\DataContainer;
+
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
+
+#[AsCallback(table: 'tl_content', target: 'list.sorting.child_record')]
+class ChildRecordListener
+{
+    public function __invoke(array $row): string
+    {
+        return '<div class="tl_content_left">'.$row['title'].'</div>';
+    }
+}
