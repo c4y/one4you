@@ -184,6 +184,37 @@ margin:
     left: "ml-{breakpoint}{value}"
 ```
 
+`trbl`-Felder verwenden eine konfigurierte Optionsliste. Dadurch erscheinen im
+Backend Auswahlfelder statt freier Pixelwerte. Über `aliases` können frühere
+Werte beim Synchronisieren kontrolliert auf die aktuelle Skala abgebildet werden:
+
+```yaml
+option_sources:
+  spacing_sizes:
+    s:
+      label: S
+      aliases: ["2"]
+```
+
+Manuell eingetragene Klassen werden nur dann aus dem normalen Contao-Klassenfeld
+entfernt, wenn sie eindeutig einer sichtbaren Auswahl zugeordnet und dort
+gespeichert werden können. Unbekannte oder widersprüchliche Klassen bleiben
+unverändert erhalten.
+
+Bestände lassen sich zunächst read-only prüfen und anschließend ausdrücklich
+übernehmen:
+
+```bash
+php vendor/bin/contao-console one4you:stylemanager:sync-classes
+php vendor/bin/contao-console one4you:stylemanager:sync-classes --apply
+```
+
+Die fokussierten Importtests laufen mit:
+
+```bash
+php vendor/c4y/one4you/tests/run.php
+```
+
 ## Frontend-Ausgabe
 
 Das Bundle hängt die erzeugten Klassen beim Rendern an die passenden Frontend-Elemente an. Unterstützt werden unter anderem:

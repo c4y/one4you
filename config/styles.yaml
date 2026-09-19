@@ -12,6 +12,24 @@ option_sources:
     bg-8: Transparent 1 (transparent)
     bg-9: Transparent 2 (transparent)
     bg-10: Transparent 3 (transparent)
+  spacing_sizes:
+    "0":
+      label: Kein Abstand
+    xs:
+      label: XS
+      aliases: ["1"]
+    s:
+      label: S
+      aliases: ["2"]
+    m:
+      label: M
+      aliases: ["3"]
+    l:
+      label: L
+      aliases: ["4", "5", "6"]
+    xl:
+      label: XL
+      aliases: ["7", "8", "9", "10"]
 
 blocks:
   article_layout:
@@ -68,6 +86,7 @@ blocks:
             label: Außen-Abstand
             type: trbl
             responsive: true
+            options_source: spacing_sizes
             class_patterns:
               top: "mt-{breakpoint}{value}"
               right: "mr-{breakpoint}{value}"
@@ -77,6 +96,7 @@ blocks:
             label: Innen-Abstand
             type: trbl
             responsive: true
+            options_source: spacing_sizes
             class_patterns:
               top: "pt-{breakpoint}{value}"
               right: "pr-{breakpoint}{value}"
@@ -124,6 +144,7 @@ blocks:
             label: Außen-Abstand
             type: trbl
             responsive: true
+            options_source: spacing_sizes
             class_patterns:
               top: "mt-{breakpoint}{value}"
               right: "mr-{breakpoint}{value}"
@@ -133,6 +154,7 @@ blocks:
             label: Innen-Abstand
             type: trbl
             responsive: true
+            options_source: spacing_sizes
             class_patterns:
               top: "pt-{breakpoint}{value}"
               right: "pr-{breakpoint}{value}"

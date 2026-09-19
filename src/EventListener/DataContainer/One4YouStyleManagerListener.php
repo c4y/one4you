@@ -44,12 +44,15 @@ final class One4YouStyleManagerListener
             return;
         }
 
-        $cleanedValue = $this->classProcessor->cleanTargetValue($dc->table, $record);
+        $result = $this->classProcessor->synchronizeRecord($dc->table, $record);
 
-        if ($cleanedValue === null || $cleanedValue === (string) ($record[$targetField] ?? '')) {
+        if ($result === null || !$result['changed']) {
             return;
         }
 
-        $connection->update($dc->table, [$targetField => $cleanedValue], ['id' => (int) $dc->id]);
+        $connection->update($dc->table, [
+            $targetField => $result['targetValue'],
+            StyleDefinitionRegistry::FIELD_NAME => $result['styleValue'],
+        ], ['id' => (int) $dc->id]);
     }
 }

@@ -282,6 +282,7 @@ final class StyleDefinitionRegistry
                     'value' => $value,
                     'label' => (string) ($option['label'] ?? $value),
                     'classes' => $classes !== '' ? $classes : $value,
+                    'aliases' => array_values(array_filter(array_map('strval', (array) ($option['aliases'] ?? [])))),
                 ];
 
                 continue;
@@ -291,6 +292,7 @@ final class StyleDefinitionRegistry
                 'value' => (string) $key,
                 'label' => (string) $option,
                 'classes' => (string) $key,
+                'aliases' => [],
             ];
         }
 

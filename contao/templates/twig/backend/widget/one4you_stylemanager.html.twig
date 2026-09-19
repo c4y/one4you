@@ -11,13 +11,13 @@
     </select>
 {% endmacro %}
 
-{% macro trbl_field(baseName, id, value) %}
+{% macro trbl_field(baseName, id, field, value) %}
     {% set sides = {'top': 'Oben', 'right': 'Rechts', 'bottom': 'Unten', 'left': 'Links'} %}
     <div class="one4you-trbl" role="group" aria-labelledby="{{ id }}_label">
         {% for side, label in sides %}
             <label class="one4you-trbl__item">
                 <span>{{ label }}</span>
-                <input type="text" name="{{ baseName }}[{{ side }}]" id="{{ id }}_{{ side }}" class="tl_text_trbl trbl_{{ side }}" value="{{ value[side]|default('') }}" data-action="focus->contao--scroll-offset#store">
+                {{ _self.select_field(baseName ~ '[' ~ side ~ ']', id ~ '_' ~ side, field, value[side]|default('')) }}
             </label>
         {% endfor %}
     </div>
@@ -74,7 +74,7 @@
                                     {% endfor %}
                                 </div>
                             {% elseif field.type == 'trbl' %}
-                                {{ widget.trbl_field(fieldBaseName, fieldId, value) }}
+                                {{ widget.trbl_field(fieldBaseName, fieldId, field, value) }}
                             {% else %}
                                 {% if field.responsive|default(false) %}
                                     {{ widget.select_field(fieldBaseName ~ '[value]', fieldId, field, value.value|default('')) }}
@@ -95,7 +95,7 @@
                                             <div class="one4you-stylemanager__breakpoint">
                                                 <strong>{{ breakpoint }}</strong>
                                                 {% if field.type == 'trbl' %}
-                                                    {{ widget.trbl_field(fieldBaseName ~ '[responsive][' ~ breakpoint ~ ']', fieldId ~ '_' ~ breakpoint, value.responsive[breakpoint]|default({})) }}
+                                                    {{ widget.trbl_field(fieldBaseName ~ '[responsive][' ~ breakpoint ~ ']', fieldId ~ '_' ~ breakpoint, field, value.responsive[breakpoint]|default({})) }}
                                                 {% elseif field.type in ['select', 'radio'] %}
                                                     {{ widget.select_field(fieldBaseName ~ '[responsive][' ~ breakpoint ~ ']', fieldId ~ '_' ~ breakpoint, field, value.responsive[breakpoint]|default('')) }}
                                                 {% endif %}

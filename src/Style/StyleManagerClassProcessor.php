@@ -8,6 +8,46 @@ use Contao\StringUtil;
 
 final class StyleManagerClassProcessor
 {
+    public function __construct(private readonly StyleManagerClassImporter $classImporter)
+    {
+    }
+
+    public function synchronizeRecord(string $table, array $record): ?array
+    {
+        $targetField = StyleDefinitionRegistry::targetField($table);
+
+        if (!$targetField) {
+            return null;
+        }
+
+        [$identifier, $classString] = $this->splitTargetValue($this->normalizeTargetValue($record[$targetField] ?? '', $targetField), $targetField);
+        $classes = $this->splitClasses($classString);
+        $values = StringUtil::deserialize($record[StyleDefinitionRegistry::FIELD_NAME] ?? null, true);
+        $values = \is_array($values) ? $values : [];
+        $import = $this->classImporter->import(StyleDefinitionRegistry::blocksForTable($table, $record), $values, $classes);
+        $importedLookup = array_fill_keys($import['importedClasses'], true);
+        $manualClasses = array_values(array_filter($classes, static fn (string $class): bool => !isset($importedLookup[$class])));
+        $hasImports = $import['importedClasses'] !== [];
+        $targetValue = $hasImports
+            ? $this->buildTargetValue($identifier, implode(' ', $manualClasses), $targetField)
+            : (string) ($record[$targetField] ?? '');
+        $styleValue = $hasImports
+            ? serialize($import['values'])
+            : (string) ($record[StyleDefinitionRegistry::FIELD_NAME] ?? '');
+
+        return [
+            'targetField' => $targetField,
+            'targetValue' => $targetValue,
+            'styleValue' => $styleValue,
+            'values' => $import['values'],
+            'importedClasses' => $import['importedClasses'],
+            'manualClasses' => $manualClasses,
+            'conflicts' => $import['conflicts'],
+            'changed' => $targetValue !== (string) ($record[$targetField] ?? '')
+                || $styleValue !== (string) ($record[StyleDefinitionRegistry::FIELD_NAME] ?? ''),
+        ];
+    }
+
     public function cleanTargetValue(string $table, array $record, bool $onlyWhenManagedClassesSelected = false): ?string
     {
         $targetField = StyleDefinitionRegistry::targetField($table);
@@ -20,13 +60,7 @@ final class StyleManagerClassProcessor
             return null;
         }
 
-        [$identifier, $classString] = $this->splitTargetValue($this->normalizeTargetValue($record[$targetField] ?? '', $targetField), $targetField);
-
-        return $this->buildTargetValue(
-            $identifier,
-            implode(' ', $this->manualClasses($table, $record, $classString)),
-            $targetField
-        );
+        return $this->synchronizeRecord($table, $record)['targetValue'] ?? null;
     }
 
     public function renderClassList(string $table, array $record, string $existingClassList = ''): string
@@ -87,31 +121,6 @@ final class StyleManagerClassProcessor
         }
 
         return implode(' ', array_map('strval', $value));
-    }
-
-    private function manualClasses(string $table, array $record, string $classList): array
-    {
-        $matchers = StyleDefinitionRegistry::managedClassMatchers($table, $record);
-
-        return array_values(array_filter(
-            $this->splitClasses($classList),
-            static fn (string $class): bool => !self::isManagedClass($class, $matchers)
-        ));
-    }
-
-    private static function isManagedClass(string $class, array $matchers): bool
-    {
-        if (\in_array($class, $matchers['exact'] ?? [], true)) {
-            return true;
-        }
-
-        foreach (($matchers['patterns'] ?? []) as $pattern) {
-            if (preg_match($pattern, $class)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function splitClasses(string $classList): array
